@@ -95,3 +95,32 @@ pokemon_dict = {
         ]
     }
 }
+
+type_chart = {
+    "electric": {
+        "strong_against": ["water", "flying"],
+        "weak_against": ["ground"],
+    },
+    "fire": {
+        "strong_against": ["grass"],
+        "weak_against": ["water"],
+    },
+    "water": {
+        "strong_against": ["fire"],
+        "weak_against": ["grass"],
+    },
+    "normal": {
+        "strong_against": [],
+        "weak_against": ["normal"],
+    },
+    "flying": {
+        "strong_against": ["grass"],
+        "weak_against": ["electric"],
+    },
+    "ghost": {
+        "strong_against": ["normal"],
+        "weak_against": ["ghost"],
+    },
+}
+
+}
