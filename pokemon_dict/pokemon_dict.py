@@ -1,3 +1,4 @@
+import random
 pokemon_dict = {
     "Pikachu": {
         "name": "Pikachu",
@@ -123,4 +124,30 @@ type_chart = {
     },
 }
 
-}
+
+def calculate_damage(pokemon, attack_name):
+    attack = None
+    for atk in pokemon['attacks']:
+        if atk['name'] == attack_name:
+            attack = atk
+            break
+
+    if attack is None:
+        return 0
+
+    # Generate random damage between min_damage and max_damage
+    damage = random.randint(attack['min_damage'], attack['max_damage'])
+
+    # If it's a multi-hit attack, repeat it a random number of times (between 2 and 5)
+    if attack['multi_hit']:
+        multi_hit_count = random.randint(2, 5)
+        total_damage = sum(random.randint(
+            attack['min_damage'], attack['max_damage']) for _ in range(multi_hit_count))
+        return total_damage
+    else:
+        return damage
+
+    # Voorbeeld van hoe het werkt:
+    pikachu = pokemon_dict["Pikachu"]
+    damage = calculate_damage(pikachu, "Quick Attack")
+    print(f"Damage: {damage}")
