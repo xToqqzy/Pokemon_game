@@ -1,6 +1,6 @@
 import random
 
-# Type-effectiviteit
+
 type_chart = {
     "Fire": {"strong": ["Grass"], "weak": ["Water"]},
     "Water": {"strong": ["Fire"], "weak": ["Grass"]},
@@ -12,7 +12,6 @@ type_chart = {
     "Normal": {"strong": [], "weak": ["Fighting"]}
 }
 
-# Pokémon en hun eigenschappen
 pokemon_data = {
     "Charizard": {"type": "Fire", "hp": 80, "attack": 85, "speed": 100, "moves": [("Flamethrower", "Fire"), ("Fire Spin", "Fire")]},
     "Blastoise": {"type": "Water", "hp": 90, "attack": 80, "speed": 78, "moves": [("Water Gun", "Water"), ("Hydro Pump", "Water")]},
@@ -23,8 +22,6 @@ pokemon_data = {
     "Dragonite": {"type": "Dragon", "hp": 100, "attack": 90, "speed": 80, "moves": [("Dragon Claw", "Dragon"), ("Twister", "Dragon")]},
     "Snorlax": {"type": "Normal", "hp": 120, "attack": 85, "speed": 30, "moves": [("Body Slam", "Normal"), ("Headbutt", "Normal")]}
 }
-
-# Damage berekenen
 
 
 def calculate_damage(attacker, defender, move):
@@ -42,15 +39,12 @@ def calculate_damage(attacker, defender, move):
 
     return base_damage, effect_text, move_name
 
-# Gevechtssysteem
-
 
 def battle(player, opponent):
     print(f"\n--- {player['name']} vs {opponent['name']} ---")
     print(
         f"{player['name']} Speed: {player['speed']} | {opponent['name']} Speed: {opponent['speed']}")
 
-    # Bepaal wie begint
     first, second = (player, opponent) if player["speed"] >= opponent["speed"] else (
         opponent, player)
     print(f"{first['name']} is sneller en begint!")
@@ -77,8 +71,6 @@ def battle(player, opponent):
                 print(f"{defender['name']} is verslagen!")
                 return attacker
 
-# Toernooi
-
 
 def tournament(player_choice):
     remaining_pokemon = [p for p in pokemon_data.keys() if p != player_choice]
@@ -100,7 +92,6 @@ def tournament(player_choice):
     print("Gefeliciteerd! Je hebt het toernooi gewonnen!")
 
 
-# Start van het spel
 player_choice = input("Kies je Pokémon: " +
                       ", ".join(pokemon_data.keys()) + ": ")
 tournament(player_choice)
