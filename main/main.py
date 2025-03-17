@@ -76,7 +76,6 @@ def tournament(player_choice):
     random.shuffle(remaining_pokemon)
     rounds = ["Kwartfinale", "Halve finale", "Finale"]
 
-    # Maak een kopie van de originele HP van de speler
     player = {"name": player_choice, **pokemon_data[player_choice]}
     original_hp = player["hp"]
 
@@ -92,7 +91,6 @@ def tournament(player_choice):
             print(f"Je bent uitgeschakeld in de {round_name}.")
             return
 
-        # Herstel de HP van de speler voor de volgende ronde
         player["hp"] = original_hp
         print(f"{player['name']} is volledig geheeld voor de volgende ronde!")
 
