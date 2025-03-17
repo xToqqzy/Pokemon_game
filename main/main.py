@@ -1,136 +1,104 @@
 import random
-import sys
 
-pokemon_dict = {
-    "Pikachu": {
-        "name": "Pikachu",
-        "hp": 30,
-        "moves": ["Thunderbolt", "Quick Attack"]
-    },
-    "Charmander": {
-        "name": "Charmander",
-        "hp": 35,
-        "moves": ["Ember", "Scratch"]
-    },
+type_chart = {
+    "Fire": {"strong": ["Grass"], "weak": ["Water"]},
+    "Water": {"strong": ["Fire"], "weak": ["Grass"]},
+    "Grass": {"strong": ["Water"], "weak": ["Fire"]},
+    "Electric": {"strong": ["Water"], "weak": []},
+    "Ghost": {"strong": ["Psychic"], "weak": []},
+    "Fighting": {"strong": ["Normal"], "weak": []},
+    "Dragon": {"strong": ["Dragon"], "weak": []},
+    "Normal": {"strong": [], "weak": ["Fighting"]}
+}
+
+pokemon_data = {
+    "Charizard": {"type": "Fire", "hp": 80, "attack": 85, "speed": 100, "moves": [("Flamethrower", "Fire"), ("Fire Spin", "Fire")]},
+    "Blastoise": {"type": "Water", "hp": 90, "attack": 80, "speed": 78, "moves": [("Water Gun", "Water"), ("Hydro Pump", "Water")]},
+    "Venusaur": {"type": "Grass", "hp": 85, "attack": 82, "speed": 80, "moves": [("Vine Whip", "Grass"), ("Razor Leaf", "Grass")]},
+    "Pikachu": {"type": "Electric", "hp": 70, "attack": 75, "speed": 110, "moves": [("Thunderbolt", "Electric"), ("Thunder Shock", "Electric")]},
+    "Gengar": {"type": "Ghost", "hp": 75, "attack": 90, "speed": 105, "moves": [("Shadow Ball", "Ghost"), ("Lick", "Ghost")]},
+    "Machamp": {"type": "Fighting", "hp": 88, "attack": 95, "speed": 65, "moves": [("Punch", "Fighting"), ("Karate Chop", "Fighting")]},
+    "Dragonite": {"type": "Dragon", "hp": 100, "attack": 90, "speed": 80, "moves": [("Dragon Claw", "Dragon"), ("Twister", "Dragon")]},
+    "Snorlax": {"type": "Normal", "hp": 120, "attack": 85, "speed": 30, "moves": [("Body Slam", "Normal"), ("Headbutt", "Normal")]}
 }
 
 
-def random_pokemon():
-    return random.choice(list(pokemon_dict.values()))
+def calculate_damage(attacker, defender, move):
+    move_name, move_type = move
+    base_damage = random.randint(10, 20)
+    effect_text = "Het was een normale hit."
+
+    if move_type in type_chart:
+        if defender["type"] in type_chart[move_type]["strong"]:
+            base_damage = int(base_damage * 1.2)
+            effect_text = "Het was super effectief!"
+        elif defender["type"] in type_chart[move_type]["weak"]:
+            base_damage = int(base_damage * 0.8)
+            effect_text = "Het was niet erg effectief."
+
+    return base_damage, effect_text, move_name
 
 
-def display_pokemon(pokemon):
+def battle(player, opponent):
+    print(f"\n--- {player['name']} vs {opponent['name']} ---")
     print(
-        f"{pokemon['name']} - HP: {pokemon['hp']} | Moves: {', '.join(pokemon['moves'])}")
+        f"{player['name']} Speed: {player['speed']} | {opponent['name']} Speed: {opponent['speed']}")
 
+    first, second = (player, opponent) if player["speed"] >= opponent["speed"] else (
+        opponent, player)
+    print(f"{first['name']} is sneller en begint!")
 
-def player_turn(player_pokemon):
-    print(f"Choose a move for {player_pokemon['name']}:")
-    for i, move in enumerate(player_pokemon['moves'], 1):
-        print(f"{i}. {move}")
-    choice = int(input("Enter the number of your chosen move: "))
-    return player_pokemon['moves'][choice - 1]
+    while player["hp"] > 0 and opponent["hp"] > 0:
+        for attacker, defender in [(first, second), (second, first)]:
+            if defender["hp"] <= 0:
+                break
 
-
-def enemy_turn(enemy_pokemon):
-    return random.choice(enemy_pokemon['moves'])
-
-
-def calculate_damage():
-    return random.randint(5, 15)
-
-
-def battle(player_pokemon, enemy_pokemon):
-    print(f"A wild {enemy_pokemon['name']} appears!\n")
-    print(
-        f"Your Pokémon: {player_pokemon['name']} VS Wild {enemy_pokemon['name']}")
-
-    turns = 5
-    while turns > 0:
-        print(
-            f"\n{player_pokemon['name']} HP: {player_pokemon['hp']} | {enemy_pokemon['name']} HP: {enemy_pokemon['hp']}")
-
-        player_move = player_turn(player_pokemon)
-        player_damage = calculate_damage()
-        print(
-            f"{player_pokemon['name']} uses {player_move}! It does {player_damage} damage.")
-        enemy_pokemon['hp'] -= player_damage
-
-        if enemy_pokemon['hp'] <= 0:
-            print(
-                f"{enemy_pokemon['name']} fainted! {player_pokemon['name']} wins the battle!\n")
-            return True
-
-        enemy_move = enemy_turn(enemy_pokemon)
-        enemy_damage = calculate_damage()
-        print(
-            f"{enemy_pokemon['name']} uses {enemy_move}! It does {enemy_damage} damage.")
-        player_pokemon['hp'] -= enemy_damage
-
-        if player_pokemon['hp'] <= 0:
-            print(
-                f"{player_pokemon['name']} fainted! {enemy_pokemon['name']} wins the battle!\n")
-            return False
-
-        turns -= 1
-
-    if player_pokemon['hp'] > enemy_pokemon['hp']:
-        print(f"\n{player_pokemon['name']} wins the battle!")
-        return True
-    elif enemy_pokemon['hp'] > player_pokemon['hp']:
-        print(f"\n{enemy_pokemon['name']} wins the battle!")
-        return False
-    else:
-        print("\nIt's a draw!")
-        return None
-
-
-def start_game():
-    tournament_wins = 0
-    total_battles = 0
-
-    while True:
-        print(f"Pokemon Text Based Attack Game")
-        print(
-            f"Tournament Wins: {tournament_wins} | Total Battles: {total_battles}")
-        user_choice = input(
-            "Press 'P' to play, 'Q' to quit, 'S' to see tournament score: ")
-
-        if user_choice.lower() == "p":
-            print("Game starting...\n")
-
-            player_pokemon = random_pokemon()
-            enemy_pokemon = random_pokemon()
-
-            display_pokemon(player_pokemon)
-            display_pokemon(enemy_pokemon)
-
-            player_wins = battle(player_pokemon, enemy_pokemon)
-            total_battles += 1
-
-            if player_wins:
-                tournament_wins += 1
-                if tournament_wins == 4:
-                    print("\nCongratulations! You've won the tournament!")
-                    play_again = input("Do you want to play again? (Y/N): ")
-                    if play_again.lower() == "n":
-                        print("Thanks for playing!")
-                        break
-                    else:
-                        tournament_wins = 0
-                        total_battles = 0
-                else:
-                    print(f"You've won {tournament_wins} game(s). Keep going!")
+            if attacker == player:
+                input("Jij bent aan de beurt! Druk op 'a' om aan te vallen.")
+                move = attacker["moves"][int(
+                    input("Kies je aanval (1 of 2): ")) - 1]
             else:
-                print("You lost this battle. Better luck next time!")
+                move = random.choice(attacker["moves"])
 
-        elif user_choice.lower() == "q":
-            print("Thanks for playing!")
-            sys.exit()
-
-        elif user_choice.lower() == "s":
+            damage, effect_text, move_name = calculate_damage(
+                attacker, defender, move)
+            defender["hp"] -= damage
             print(
-                f"Tournament Wins: {tournament_wins} | Total Battles Played: {total_battles}")
+                f"{attacker['name']} gebruikte {move_name}! {effect_text} {defender['name']} heeft nog {max(0, defender['hp'])} HP.")
+
+            if defender["hp"] <= 0:
+                print(f"{defender['name']} is verslagen!")
+                return attacker
 
 
-start_game()
+def tournament(player_choice):
+    remaining_pokemon = [p for p in pokemon_data.keys() if p != player_choice]
+    random.shuffle(remaining_pokemon)
+    rounds = ["Kwartfinale", "Halve finale", "Finale"]
+
+    # Maak een kopie van de originele HP van de speler
+    player = {"name": player_choice, **pokemon_data[player_choice]}
+    original_hp = player["hp"]
+
+    for round_name in rounds:
+        ai_pokemon = remaining_pokemon.pop()
+        opponent = {"name": ai_pokemon, **pokemon_data[ai_pokemon]}
+        print(f"\n{round_name}: {player['name']} tegen {opponent['name']}!")
+        input("Druk op 'a' om te beginnen.")
+
+        winner = battle(player, opponent)
+
+        if winner != player:
+            print(f"Je bent uitgeschakeld in de {round_name}.")
+            return
+
+        # Herstel de HP van de speler voor de volgende ronde
+        player["hp"] = original_hp
+        print(f"{player['name']} is volledig geheeld voor de volgende ronde!")
+
+    print("Gefeliciteerd! Je hebt het toernooi gewonnen!")
+
+
+player_choice = input("Kies je Pokémon: " +
+                      ", ".join(pokemon_data.keys()) + ": ")
+tournament(player_choice)
